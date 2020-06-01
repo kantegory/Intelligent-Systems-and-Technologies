@@ -29,10 +29,13 @@ class Shelf:
         self.db.close()
 
 
-# d = Shelf()
+d = Shelf()
 # # appointment = db_config.appointment
 # # problem = db_config.problem
 # # advice = db_config.advice
-# d.set('other', set([]))
+gingvit = db_config.gingvit
+pulpit = db_config.pulpit
+stomatit = db_config.stomatit
+d.set('stomatit', set(stomatit))
 # # print(type(d.get('advice')))
-# d.close()
+d.close()

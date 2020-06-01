@@ -35,6 +35,7 @@ class Tokenizer:
         self.message = message.lower()
         self.tokens = set()
         self.t = []
+        self.disease = {'stomatit': 0, 'pulpit': 0, 'gingvit': 0}
         self.prob = {'advice': 0, 'problem': 0, 'appointment': 0, 'other': 0}
 
     """ Генерируем ngramm для обработанного текста"""
@@ -46,6 +47,7 @@ class Tokenizer:
             self.gen_collocation(key[i:i + k], n)
 
     def gen_collocation(self, arr, n):
+        # self.t.reverse()
         self.tokens.add(' '.join(self.t))
         if len(self.t) == n:
             return
@@ -72,7 +74,24 @@ class Tokenizer:
         self.ngrams(temp)
         self.t = []
 
+    def probably_disease(self):
+        """Вероятность болезни"""
+        for key in self.disease:
+            temp = db.get(key)
+            for token in self.tokens:
+                if token in temp:
+                    self.disease[key] += 1
+        s = 0
+        for key in self.disease:
+            s += self.disease[key]
+        if s != 0:
+            for key in self.disease:
+                self.disease[key] /= s
+
+        return self.disease
+
     def probably_intent(self):
+        """Вероятность интента"""
         for key in self.prob:
             temp = db.get(key)
             for token in self.tokens:
@@ -90,7 +109,10 @@ class Tokenizer:
         return self.prob
 
 
-# mes = 'Скажите пожалуйста, могу ли я записаться к терапевту на завтра? И работают ли у вас детские стоматологи?
-# T = Tokenizer(mes)
-# T.normalization()
-# print(T.probably_intent())
+mes = 'Здравствуйте, на осмотре перед детсадом обнаружили, что у дочки кариес и надо удалять нерв, по себе помню, что это жуткая боль, возможно ли обезболивание без последствий для организма? И сколько это будет стоить?'
+
+print(len(mes.split()))
+T = Tokenizer(mes)
+T.normalization()
+print(T.probably_intent())
+print(T.probably_disease())
