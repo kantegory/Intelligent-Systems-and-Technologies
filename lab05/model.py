@@ -5,7 +5,7 @@ import pymorphy2
 import db_intents
 
 morph = pymorphy2.MorphAnalyzer()
-# nltk.download('stopwords')
+nltk.download('stopwords')
 db = db_intents.Shelf()
 
 
@@ -109,10 +109,16 @@ class Tokenizer:
         return self.prob
 
 
-mes = 'Здравствуйте, на осмотре перед детсадом обнаружили, что у дочки кариес и надо удалять нерв, по себе помню, что это жуткая боль, возможно ли обезболивание без последствий для организма? И сколько это будет стоить?'
+def predict(message):
+    # message = 'Здравствуйте, на осмотре перед детсадом обнаружили, что у дочки кариес и надо удалять нерв, по себе помню, что это жуткая боль, возможно ли обезболивание без последствий для организма? И сколько это будет стоить?'
+    print('The message is ', message)
+    print(len(message.split()))
+    T = Tokenizer(message)
+    T.normalization()
+    probably_intent = T.probably_intent()
+    probably_disease = T.probably_disease()
 
-print(len(mes.split()))
-T = Tokenizer(mes)
-T.normalization()
-print(T.probably_intent())
-print(T.probably_disease())
+    result = { 'intent':  probably_intent, 
+                'disease': probably_disease }
+
+    return result
